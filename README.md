@@ -17,8 +17,8 @@ A modular, extensible DMX foot controller backbone for Raspberry Pi, using a MID
    ```
 2. Create and activate the virtual environment:
    ```sh
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    ```
 3. Install dependencies:
    ```sh
@@ -28,7 +28,7 @@ A modular, extensible DMX foot controller backbone for Raspberry Pi, using a MID
 ## Running
 
 ```sh
-python main.py
+python api.py
 ```
 
 ## Roadmap / TODO
