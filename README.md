@@ -1,40 +1,19 @@
-# DMX Stomps
+# 🎛️ DMX Stomps
 
-A modular, extensible DMX foot controller backbone for Raspberry Pi, using a MIDI footswitch (e.g., Ampero Control) as input and DMX output via OLA.
+A complete DMX and MIDI control system with a modern web interface, built with FastAPI backend and React frontend.
 
-## Features
+## 🏗️ Architecture
 
-- MIDI input handling (Ampero Control or similar)
-- DMX output via OLA
-- Easily extendable for custom mappings, scenes, and effects
-
-## Setup
-
-1. Clone this repo and enter the directory:
-   ```sh
-   git clone <repo-url>
-   cd dmx-stomps
-   ```
-2. Create and activate the virtual environment:
-   ```sh
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-3. Install dependencies:
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-## Running
-
-```sh
-python api.py
 ```
-
-## Roadmap / TODO
-
-- Configurable MIDI-to-DMX mapping
-- Scene and preset management
-- Web UI for configuration
-- Display/LED feedback
-- Logging and diagnostics
+dmx-stomps/
+├── backend/           # FastAPI Python backend
+│   ├── api.py        # Main API endpoints
+│   ├── dmx/          # DMX control modules
+│   ├── midi/         # MIDI handling modules
+│   └── main.py       # Server entry point
+├── frontend/          # React TypeScript frontend
+│   ├── src/          # React source code
+│   └── public/       # Static assets
+├── start-dev.sh      # Development startup script
+└── package.json      # Project management
+```

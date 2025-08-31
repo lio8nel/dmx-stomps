@@ -26,7 +26,3 @@ async def root():
 async def hello_world():
     """Dummy async route that returns hello world"""
     return {"message": "hello world"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
