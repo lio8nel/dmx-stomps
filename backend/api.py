@@ -22,7 +22,15 @@ async def root():
     """Root endpoint"""
     return {"message": "DMX Stomps API is running"}
 
-@app.get("/hello")
-async def hello_world():
-    """Dummy async route that returns hello world"""
-    return {"message": "hello world"}
+@app.get("/stomps")
+async def get_stomps():
+    return {
+        "stomps": [
+            { "id": "s-1", "name": "Stomp 1", "state": "off" },
+            { "id": "s-2", "name": "Stomp 2", "state": "off" }
+        ]
+    }
+
+@app.put("/stomps/{id}")
+async def toggle_stomps(id: str):
+    return { "id": id,"state": "on" }
