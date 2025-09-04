@@ -1,5 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from core import Stomp, StompRepository
+from infrastructure import InMemoryStompRepository
+from pydantic import BaseModel
+from typing import Literal
 
 # Create FastAPI app instance
 app = FastAPI(
@@ -23,14 +27,30 @@ async def root():
     return {"message": "DMX Stomps API is running"}
 
 @app.get("/stomps")
-async def get_stomps():
+async def get_stomps(stomp_repository: StompRepository = Depends(InMemoryStompRepository)):
+    stomps = stomp_repository.get_stomps()
     return {
         "stomps": [
-            { "id": "s-1", "name": "Stomp 1", "state": "off" },
-            { "id": "s-2", "name": "Stomp 2", "state": "off" }
+            { "id": s.id, "name": s.name, "state": s.state } for s in stomps
         ]
     }
 
+class StompState(BaseModel):
+    state: Literal["on", "off"]
+
 @app.put("/stomps/{id}")
-async def toggle_stomps(id: str):
-    return { "id": id,"state": "on" }
+async def toggle_stomps(
+    id: str,
+    payload: StompState,
+    stomp_repository: StompRepository = Depends(InMemoryStompRepository)
+):
+    stomps = stomp_repository.get_stomps()
+    stomp = next((s for s in stomps if s.id == id), None)
+    
+    if stomp is None:
+        raise HTTPException(status_code=404, detail="Stomp not found")
+
+    stomp.state = payload.state
+    stomp_repository.save(stomp)
+
+    return { "id": id, "state": stomp.state }

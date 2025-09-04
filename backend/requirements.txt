@@ -3,3 +3,6 @@ python-rtmidi
 ola
 fastapi
 uvicorn[standard]
+pytest
+pytest-asyncio
+httpx

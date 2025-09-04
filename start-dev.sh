@@ -19,10 +19,8 @@ trap cleanup SIGINT SIGTERM
 
 # Start backend server
 echo "🚀 Starting Backend API server..."
-cd backend
 python -m uvicorn backend.api:app --reload --host 0.0.0.0 --port 8000 &
 BACKEND_PID=$!
-cd ..
 
 # Wait a moment for backend to start
 sleep 2
