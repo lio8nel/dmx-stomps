@@ -57,7 +57,7 @@ class TestInMemoryStompRepository:
         returned = sut.get_stomps()
         returned.append(Stomp("s-x", "Injected", "on"))
         returned[0].name = "Mutated Name"
-        returned[0].state = "on"
+        returned[0].updateState("on")
 
         # Assert
         assert len(sut.stomps) == 1

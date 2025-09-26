@@ -19,3 +19,14 @@ class TestStomp:
         assert sut.id == stomp_id
         assert sut.name == name
         assert sut.state == state
+
+    def test_update_state_changes_state(self):
+        """Given a stomp, when updateState is called, then state changes"""
+        # Arrange
+        sut = Stomp("s-2", "Another Stomp", "off")
+
+        # Act
+        sut.updateState("on")
+
+        # Assert
+        assert sut.state == "on"

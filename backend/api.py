@@ -50,7 +50,7 @@ async def toggle_stomps(
     if stomp is None:
         raise HTTPException(status_code=404, detail="Stomp not found")
 
-    stomp.state = payload.state
+    stomp.updateState(payload.state)
     stomp_repository.save(stomp)
 
     return { "id": id, "state": stomp.state }

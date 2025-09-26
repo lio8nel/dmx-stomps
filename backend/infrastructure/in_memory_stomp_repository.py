@@ -19,4 +19,4 @@ class InMemoryStompRepository(StompRepository):
             self.stomps.append(stomp)
         else:
             existingStomp.name = stomp.name
-            existingStomp.state = stomp.state
+            existingStomp.updateState(stomp.state)
