@@ -1,9 +1,8 @@
-import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import Mock, patch
 from api import app
 from core import Stomp, StompRepository
-from infrastructure import InMemoryStompRepository
+from infrastructure import InMemoryStompRepository, DmxDeamon
 
 
 class TestToggleStomps:
@@ -81,3 +80,91 @@ class TestGetStomps:
         assert data["stomps"][1]["id"] == "s-2"
         assert data["stomps"][1]["name"] == "Mocked Stomp 2"
         assert data["stomps"][1]["state"] == "off"
+
+
+class TestDeamonRoutes:
+    """Test suite for /deamon/start endpoint"""
+
+    class FakeDmxDeamon(DmxDeamon):
+        def __init__(self):
+            self._running = False
+            self.start_calls = 0
+            self.stop_calls = 0
+
+        def start(self) -> None:
+            self.start_calls += 1
+            self._running = True
+
+        def stop(self) -> None:
+            self.stop_calls += 1
+            self._running = False
+
+        def isRunning(self) -> bool:
+            return self._running
+
+    def test_start_triggers_dmx_deamon(self):
+        """When POST /deamon/start, the DmxDeamon.start is invoked"""
+        # Arrange
+        fake = self.FakeDmxDeamon()
+        app.dependency_overrides[DmxDeamon] = lambda: fake
+
+        sut = TestClient(app)
+
+        # Act
+        response = sut.post("/deamon/start")
+
+        # Assert
+        assert response.status_code == 200
+        assert fake.start_calls == 1
+        assert fake.isRunning() is True
+
+    def test_start_does_not_trigger_when_already_running(self):
+        """When POST /deamon/start and daemon is running, start is not invoked"""
+        # Arrange
+        fake = self.FakeDmxDeamon()
+        app.dependency_overrides[DmxDeamon] = lambda: fake
+
+        sut = TestClient(app)
+        sut.post("/deamon/start")
+
+        # Act
+        response = sut.post("/deamon/start")
+
+        # Assert
+        assert response.status_code == 200
+        assert fake.start_calls == 1
+        assert fake.isRunning() is True
+
+    def test_stop_triggers_dmx_deamon(self):
+        """When POST /deamon/stop, the DmxDeamon.stop is invoked"""
+        # Arrange
+        fake = self.FakeDmxDeamon()
+        app.dependency_overrides[DmxDeamon] = lambda: fake
+
+        sut = TestClient(app)
+        response = sut.post("/deamon/start")
+
+        # Act
+        response = sut.post("/deamon/stop")
+
+        # Assert
+        assert response.status_code == 200
+        assert fake.stop_calls == 1
+        assert fake.isRunning() is False
+
+    def test_stop_does_not_trigger_when_already_stopped(self):
+        """When POST /deamon/stop and daemon not running, stop is not invoked"""
+        # Arrange
+        fake = self.FakeDmxDeamon()
+        fake.running = False
+        app.dependency_overrides[DmxDeamon] = lambda: fake
+
+        sut = TestClient(app)
+
+        # Act
+        response = sut.post("/deamon/stop")
+
+        # Assert
+        assert response.status_code == 200
+        assert fake.stop_calls == 0
+        assert fake.isRunning() is False

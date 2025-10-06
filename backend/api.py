@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from core import Stomp, StompRepository
 from core.toggle_stomp import ToggleStompCommand
-from infrastructure import InMemoryStompRepository
+from infrastructure import InMemoryStompRepository, DmxDeamon
 from pydantic import BaseModel
 from typing import Literal
 
@@ -10,7 +10,7 @@ from typing import Literal
 app = FastAPI(
     title="DMX Stomps API",
     description="REST API for DMX and MIDI control",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Add CORS middleware for web frontend compatibility
@@ -50,3 +50,15 @@ async def toggle_stomps(
     if commandResult is None:
         raise HTTPException(status_code=404, detail="Stomp not found")
     return { "id": id, "state": commandResult.state }
+
+@app.post("/deamon/start")
+async def start_dmx(deamon: DmxDeamon = Depends(DmxDeamon)):
+    if not deamon.isRunning():
+        deamon.start()
+    return { "status": "started" }
+
+@app.post("/deamon/stop")
+async def stop_dmx(deamon: DmxDeamon = Depends(DmxDeamon)):
+    if deamon.isRunning():
+        deamon.stop()
+    return { "status": "stopped" }
