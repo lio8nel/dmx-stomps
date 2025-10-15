@@ -3,9 +3,10 @@
     "version": "1.0.0",
     "description": "DMX and MIDI control system with web interface",
     "scripts": {
-        "dev": "./start-dev.sh",
+        "dev:install": "npm run backend:install && npm run frontend:install",
         "backend:dev": "cd backend && python -m uvicorn api:app --reload --host 0.0.0.0 --port 8000",
         "backend:test": "cd backend && pytest -q",
+        "backend:install": "cd backend && pip install -r requirements.txt",
         "frontend:dev": "cd frontend && npm run dev",
         "frontend:install": "cd frontend && npm install",
         "frontend:build": "cd frontend && npm run build",

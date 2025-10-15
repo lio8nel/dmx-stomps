@@ -6,14 +6,31 @@ A complete DMX and MIDI control system with a modern web interface, built with F
 
 ```
 dmx-stomps/
-├── backend/           # FastAPI Python backend
-│   ├── api.py        # Main API endpoints
-│   ├── dmx/          # DMX control modules
-│   ├── midi/         # MIDI handling modules
-│   └── main.py       # Server entry point
-├── frontend/          # React TypeScript frontend
-│   ├── src/          # React source code
-│   └── public/       # Static assets
+├── backend/          # FastAPI Python backend
+├── frontend/         # React TypeScript frontend
 ├── start-dev.sh      # Development startup script
-└── package.json      # Project management
+└── package.json      # Monorepo management
+```
+
+## Prerequisite
+
+* python3
+* nodejs LTS
+
+## Install
+
+```
+python -m venv ./backend/.venv
+chmod +x ./backend/.venv/bin/activate
+npm run install:all
+```
+
+## 🏃 Run
+
+```
+# backend only
+source ./backend/.venv/bin/activate
+npm run backend:dev
+# frontend only
+npm run frontend:dev
 ```
