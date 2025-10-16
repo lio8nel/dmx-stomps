@@ -1,7 +1,7 @@
 import pytest
-from core.stomp_repository import StompRepository
+from domain.stomp_repository import StompRepository
 from infrastructure.in_memory_stomp_repository import InMemoryStompRepository
-from core.stomp import Stomp
+from domain.stomp import Stomp
 
 
 class TestInMemoryStompRepository:

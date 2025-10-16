@@ -1,5 +1,5 @@
-from core.stomp import Stomp
-from core.stomp_repository import StompRepository
+from domain.stomp import Stomp
+from domain.stomp_repository import StompRepository
 import copy
 
 

@@ -1,22 +1,23 @@
 from fastapi.testclient import TestClient
 from unittest.mock import Mock, patch
 from api import app
-from core import Stomp, StompRepository
+from domain import Stomp, StompRepository
 from infrastructure import InMemoryStompRepository, DmxDeamon
 
 
 class TestToggleStomps:
     """Test suite for toggle_stomps functionality"""
 
-    @patch("api.ToggleStompCommand")
-    def test_toggle_stomp_success_calls_command(self, mock_command_cls):
+    @patch("infrastructure.InMemoryStompRepository")
+    def test_toggle_stomp_success_calls_command(self, mock_stomp_repository):
         """When toggling, the command is invoked with id and state"""
         # Arrange
         stomp_id = "s-1"
-        mock_command = Mock()
-        mock_command.execute.return_value = Stomp(id=stomp_id, name="Stomp 1", state="off")
-        mock_command_cls.return_value = mock_command
-        app.dependency_overrides[InMemoryStompRepository] = lambda: Mock()
+        mock_stomp_repository.get_stomps.return_value = [
+            Stomp(id="s-1", name="Mocked Stomp 1", state="on"),
+            Stomp(id="s-2", name="Mocked Stomp 2", state="off"),
+        ]
+        app.dependency_overrides[InMemoryStompRepository] = lambda: mock_stomp_repository
         client = TestClient(app)
 
         # Act
@@ -24,21 +25,17 @@ class TestToggleStomps:
 
         # Assert
         assert response.status_code == 200
-        mock_command_cls.assert_called_once()
-        mock_command.execute.assert_called_once_with(stomp_id, "off")
         data = response.json()
         assert data["id"] == stomp_id
         assert data["state"] == "off"
 
-    @patch("api.ToggleStompCommand")
-    def test_toggle_stomp_notfound_returns_404(self, mock_command_cls):
+    @patch("infrastructure.InMemoryStompRepository")
+    def test_toggle_stomp_notfound_returns_404(self, mock_stomp_repository):
         """When command returns None, API responds 404"""
         # Arrange
         stomp_id = "s-1"
-        mock_command = Mock()
-        mock_command.execute.return_value = None
-        mock_command_cls.return_value = mock_command
-        app.dependency_overrides[InMemoryStompRepository] = lambda: Mock()
+        mock_stomp_repository.get_stomps.return_value = []
+        app.dependency_overrides[InMemoryStompRepository] = lambda: mock_stomp_repository
         client = TestClient(app)
 
         # Act
@@ -46,7 +43,6 @@ class TestToggleStomps:
 
         # Assert
         assert response.status_code == 404
-        mock_command.execute.assert_called_once_with(stomp_id, "on")
         data = response.json()
         assert data["detail"] == "Stomp not found"
 

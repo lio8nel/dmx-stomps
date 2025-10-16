@@ -1,6 +1,6 @@
 from typing import Optional
-from .stomp import Stomp
-from .stomp_repository import StompRepository
+from domain.stomp import Stomp
+from domain.stomp_repository import StompRepository
 
 
 class ToggleStompCommand:

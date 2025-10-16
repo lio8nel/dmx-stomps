@@ -1,7 +1,7 @@
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from core import Stomp, StompRepository
-from core.toggle_stomp import ToggleStompCommand
+from domain import Stomp, StompRepository
+from commands.toggle_stomp import ToggleStompCommand
 from infrastructure import InMemoryStompRepository, DmxDeamon
 from pydantic import BaseModel
 from typing import Literal

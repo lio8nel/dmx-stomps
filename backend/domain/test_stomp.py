@@ -1,5 +1,5 @@
 import pytest
-from core.stomp import Stomp
+from domain.stomp import Stomp
 
 
 class TestStomp:

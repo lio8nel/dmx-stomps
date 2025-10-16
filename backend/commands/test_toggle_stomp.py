@@ -1,7 +1,5 @@
-import pytest
 from infrastructure import InMemoryStompRepository
-from core.toggle_stomp import ToggleStompCommand
-
+from commands.toggle_stomp import ToggleStompCommand
 
 class TestToggleStompCommand:
     def test_toggle_success(self):
