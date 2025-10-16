@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from domain import Stomp, StompRepository
 from commands.toggle_stomp import ToggleStompCommand
+from commands.handlers.toggle_stomp_handler import ToggleStompCommandHandler
 from infrastructure import InMemoryStompRepository, DmxDeamon
 from pydantic import BaseModel
 from typing import Literal
@@ -45,8 +46,8 @@ async def toggle_stomps(
     payload: StompState,
     stomp_repository: StompRepository = Depends(InMemoryStompRepository)
 ):
-    command = ToggleStompCommand(stomp_repository)
-    commandResult = command.execute(id, payload.state)
+    command = ToggleStompCommandHandler(stomp_repository)
+    commandResult = command.execute(ToggleStompCommand(id, payload.state))
     if commandResult is None:
         raise HTTPException(status_code=404, detail="Stomp not found")
     return { "id": id, "state": commandResult.state }
